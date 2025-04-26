@@ -46,14 +46,19 @@ app.post("/send-email", async (req, res) => {
 });
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
-const CREDENTIALS_PATH = './credentials.json'; // Path to your credentials
 const FILE_ID = '1lmUDKl1OBXOaussGzDDjj2j-voodQyQD';  // Replace with your file ID
 
-// Auth Setup
+// Decode the Base64-encoded credentials from .env
+const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64').toString('utf8')
+);
+
+// Auth Setup without keyFile
 const auth = new google.auth.GoogleAuth({
-    keyFile: CREDENTIALS_PATH,
+    credentials: credentials, // use credentials directly
     scopes: SCOPES,
 });
+
 const drive = google.drive({ version: 'v3', auth });
 
 app.get("/data", async (req, res) => {
